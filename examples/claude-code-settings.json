@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(git commit *)",
+      "Bash(git status)",
+      "Bash(git diff *)",
+      "Read",
+      "Edit(src/**)",
+      "Edit(tests/**)",
+      "WebFetch(domain:docs.example.com)",
+      "mcp__github__create_pull_request",
+      "mcp__github__list_issues",
+      "mcp__puppeteer__puppeteer_navigate",
+      "mcp__puppeteer__puppeteer_screenshot"
+    ],
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(curl * | bash)",
+      "Edit(~/.ssh/**)",
+      "Edit(~/.bashrc)"
+    ],
+    "defaultMode": "default"
+  }
+}

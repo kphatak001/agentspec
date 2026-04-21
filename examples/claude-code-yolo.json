@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash",
+      "Edit",
+      "Read",
+      "WebFetch",
+      "mcp__filesystem__read_file",
+      "mcp__filesystem__write_file",
+      "mcp__filesystem__list_directory",
+      "mcp__github__create_pull_request",
+      "mcp__github__push_files",
+      "mcp__github__create_issue",
+      "mcp__slack__send_message",
+      "mcp__postgres__query"
+    ],
+    "deny": [],
+    "defaultMode": "bypassPermissions"
+  }
+}

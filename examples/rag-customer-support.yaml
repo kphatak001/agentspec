@@ -1,0 +1,49 @@
+name: rag-customer-support
+description: Customer support agent with RAG from multiple sources
+
+agents:
+  - name: support
+    model: claude-sonnet
+    tools:
+      - name: search_kb
+        type: read
+      - name: web_search
+        type: external
+      - name: create_ticket
+        type: write
+        scope: "tickets/*"
+      - name: send_email
+        type: external
+
+    auto_approved:
+      - search_kb
+      - web_search
+
+memory:
+  type: rag
+  sources:
+    - name: knowledge_base
+      type: local_files
+      path: "./kb/**"
+      writable: false
+      content_validated: true
+    - name: customer_wiki
+      type: external
+      url: "https://wiki.company.com/support"
+      writable: true
+      content_validated: false
+    - name: slack_history
+      type: external
+      url: "https://slack.com/api"
+      writable: false
+      content_validated: false
+
+logging:
+  tool_calls: true
+  agent_decisions: true
+  output_content: false
+
+human_in_the_loop:
+  destructive_actions: true
+  external_calls: false
+  delegation: false

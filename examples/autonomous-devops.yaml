@@ -1,0 +1,58 @@
+name: autonomous-devops
+description: Fully autonomous DevOps agent with broad access
+
+agents:
+  - name: devops
+    model: claude-sonnet
+    tools:
+      - name: execute_bash
+        type: execute
+        scope: "*"
+      - name: fs_write
+        type: write
+        scope: "*"
+      - name: fs_read
+        type: read
+        scope: "*"
+      - name: web_fetch
+        type: external
+        scope: "*"
+      - name: kubectl
+        type: execute
+        scope: "*"
+      - name: terraform
+        type: execute
+        scope: "*"
+      - name: docker
+        type: execute
+        scope: "*"
+      - name: aws_cli
+        type: execute
+        scope: "*"
+      - name: ssh
+        type: execute
+        scope: "*"
+      - name: db_query
+        type: write
+        scope: "*"
+
+    auto_approved:
+      - execute_bash
+      - fs_write
+      - fs_read
+      - web_fetch
+      - kubectl
+      - terraform
+      - docker
+      - aws_cli
+      - ssh
+      - db_query
+
+    mcp_servers:
+      - name: cloud-mcp
+        tools: [deploy, rollback, scale, monitor, alert_silence]
+
+logging:
+  tool_calls: false
+  agent_decisions: false
+  output_content: false

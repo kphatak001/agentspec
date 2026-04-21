@@ -1,0 +1,13 @@
+name: simple-chatbot
+description: A simple Q&A chatbot with no tools
+
+agents:
+  - name: chatbot
+    model: claude-haiku
+    tools: []
+    auto_approved: []
+
+logging:
+  tool_calls: true
+  agent_decisions: true
+  output_content: true

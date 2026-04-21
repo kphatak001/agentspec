@@ -1,0 +1,66 @@
+name: code-assistant
+description: AI coding assistant with file and terminal access
+
+agents:
+  - name: main
+    model: claude-sonnet
+    system_prompt: "You are a coding assistant..."
+
+    tools:
+      - name: fs_read
+        type: read
+        scope: "project/**"
+      - name: fs_write
+        type: write
+        scope: "project/**"
+      - name: execute_bash
+        type: execute
+        scope: "*"
+
+    auto_approved:
+      - fs_read
+      - web_search
+
+    mcp_servers:
+      - name: git-mcp
+        tools: [git_status, git_commit, git_push]
+      - name: github-mcp
+        tools: [create_pr, list_issues]
+        env:
+          GITHUB_TOKEN: "$GITHUB_TOKEN"
+
+    delegates_to:
+      - name: code-reviewer
+        tools: [fs_read, code]
+        output_validated: false
+
+  - name: code-reviewer
+    model: claude-haiku
+    tools:
+      - name: fs_read
+        type: read
+      - name: code
+        type: read
+
+memory:
+  type: rag
+  sources:
+    - name: codebase
+      type: local_files
+      path: "./src/**"
+      writable: false
+    - name: confluence
+      type: external
+      url: "https://wiki.company.com/space/engineering"
+      auth: api_key
+      content_validated: false
+
+logging:
+  tool_calls: true
+  agent_decisions: false
+  output_content: false
+
+human_in_the_loop:
+  destructive_actions: true
+  external_calls: false
+  delegation: false
