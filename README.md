@@ -101,6 +101,20 @@ agentspec model agent.yaml --owasp 01,02,03            # specific categories
 4. **Format-agnostic.** Parsers are pluggable. Works with any agent framework.
 5. **Partial analysis is fine.** Missing info → skip that analyzer, don't fail.
 
+## Generate mcpfw Policies
+
+agentspec can generate [mcpfw](https://github.com/kphatak001/mcpfw) runtime enforcement policies directly from its findings:
+
+```bash
+# Scan → generate policy in one command
+agentspec model agent.yaml --emit-policy -o policy.yaml
+
+# Then enforce at runtime
+mcpfw --policy policy.yaml -- npx @modelcontextprotocol/server-filesystem .
+```
+
+Static analysis finds the risks. Runtime enforcement blocks them.
+
 ## Dependencies
 
 - Python 3.10+

@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import sys
 from . import parser, analyzer, scorer, reporter
+from .emit_policy import emit_policy
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -14,11 +15,13 @@ def main(argv: list[str] | None = None) -> int:
     model_p.add_argument("config", help="Path to agent config file")
     model_p.add_argument("--format", dest="fmt", default="auto",
                         choices=["auto", "agentspec", "kiro", "crewai", "claude-code", "openai-agents"])
-    model_p.add_argument("--output-format", default="terminal", choices=["terminal", "json", "markdown"])
+    model_p.add_argument("--output-format", default="terminal", choices=["terminal", "json", "markdown", "policy"])
     model_p.add_argument("-o", "--output", help="Write report to file")
     model_p.add_argument("--min-severity", default="INFO", choices=["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO"])
     model_p.add_argument("--owasp", default="all", help="Filter OWASP categories: 01,02,03 or all")
     model_p.add_argument("-v", "--verbose", action="store_true")
+    model_p.add_argument("--emit-policy", action="store_true",
+                        help="Generate mcpfw policy YAML from findings")
 
     args = ap.parse_args(argv)
     if args.command != "model":
@@ -34,6 +37,17 @@ def main(argv: list[str] | None = None) -> int:
     owasp_filter = None if args.owasp == "all" else set(args.owasp.split(","))
     findings = analyzer.run(arch, owasp_filter=owasp_filter, min_severity=args.min_severity)
     tm = scorer.score(arch, findings)
+
+    # Handle --emit-policy or --output-format policy
+    if args.emit_policy or args.output_format == "policy":
+        out = emit_policy(arch, findings)
+        if args.output:
+            with open(args.output, "w") as f:
+                f.write(out)
+            print(f"mcpfw policy written to {args.output}")
+        else:
+            print(out)
+        return 0
 
     if args.output_format == "json":
         out = reporter.to_json(tm)
