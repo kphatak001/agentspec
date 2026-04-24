@@ -13,6 +13,7 @@ from .analyzers import (
     uncontrolled_autonomy,
     logging_monitoring,
     agent_communication,
+    ast10,
 )
 
 _ANALYZERS = [
@@ -26,6 +27,7 @@ _ANALYZERS = [
     uncontrolled_autonomy,
     logging_monitoring,
     agent_communication,
+    ast10,
 ]
 
 _SEVERITY_ORDER = {"CRITICAL": 0, "HIGH": 1, "MEDIUM": 2, "LOW": 3, "INFO": 4}
@@ -48,4 +50,4 @@ def run(arch: Architecture, owasp_filter: set[str] | None = None,
                 findings.append(f)
 
     findings.sort(key=lambda f: (f.score * -1, _SEVERITY_ORDER.get(f.severity, 4)))
-    return findings
+    return ast10.enrich_findings(findings)

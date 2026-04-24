@@ -78,7 +78,9 @@ agentspec model agent.yaml --owasp 01,02,03            # specific categories
 | Kiro CLI | `.json` with `allowedTools`/`mcpServers` | `--format kiro` |
 | CrewAI | `.yaml` with `role`/`backstory` | `--format crewai` |
 
-## OWASP Top 10 for Agentic AI Coverage
+## OWASP Coverage
+
+### OWASP Top 10 for Agentic AI (2025)
 
 | # | Category | What agentspec checks |
 |---|----------|----------------------|
@@ -92,6 +94,23 @@ agentspec model agent.yaml --owasp 01,02,03            # specific categories
 | 08 | Uncontrolled Autonomy | HITL gaps, auto-approved destructive tools |
 | 09 | Inadequate Logging | Disabled or missing logging fields |
 | 10 | Insecure Agent Communication | Remote MCP without TLS |
+
+### OWASP Agentic Skills Top 10 — AST10 (2026)
+
+| # | Risk | What agentspec checks |
+|---|------|----------------------|
+| AST01 | Malicious Skills | Cross-ref from prompt injection + insecure memory findings |
+| AST02 | Supply Chain Compromise | Remote MCP servers without provenance verification |
+| AST03 | Over-Privileged Skills | Cross-ref from excessive permissions findings |
+| AST04 | Insecure Metadata | Cross-ref from output validation findings |
+| AST05 | Unsafe Deserialization | Cross-ref from insecure memory findings |
+| AST06 | Weak Isolation | Cross-ref from sandboxing + agent communication findings |
+| AST07 | Update Drift | @latest MCP servers without version pinning |
+| AST08 | Poor Scanning | No skill scanning or validation configured |
+| AST09 | No Governance | Cross-ref from autonomy + logging findings |
+| AST10 | Cross-Platform Reuse | Cross-ref from agent trust + communication findings |
+
+All findings include AST10 cross-references where applicable.
 
 ## Design Principles
 
