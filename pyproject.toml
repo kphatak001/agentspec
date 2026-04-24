@@ -7,7 +7,7 @@ name = "agentspec"
 version = "0.1.0"
 description = "Threat model generator for agentic AI systems. OWASP Top 10 mapped."
 readme = "README.md"
-license = {text = "Non-Commercial Source License"}
+license = {text = "Apache-2.0"}
 requires-python = ">=3.10"
 authors = [{name = "Kaustubh Phatak"}]
 keywords = ["ai-security", "threat-model", "owasp", "agentic-ai", "mcp", "llm"]
@@ -15,7 +15,7 @@ classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "Topic :: Security",
-    "License :: Other/Proprietary License",
+    "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3.10",
 ]
 dependencies = ["pyyaml>=6.0"]

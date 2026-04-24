@@ -123,4 +123,4 @@ Static analysis finds the risks. Runtime enforcement blocks them.
 
 ## License
 
-Non-Commercial Source License
+Apache-2.0 — see [LICENSE](LICENSE).
