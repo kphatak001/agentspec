@@ -101,19 +101,25 @@ agentspec model agent.yaml --owasp 01,02,03            # specific categories
 4. **Format-agnostic.** Parsers are pluggable. Works with any agent framework.
 5. **Partial analysis is fine.** Missing info → skip that analyzer, don't fail.
 
-## Generate mcpfw Policies
+## Generate Runtime Policies
 
-agentspec can generate [mcpfw](https://github.com/kphatak001/mcpfw) runtime enforcement policies directly from its findings:
+agentspec generates enforcement policies for multiple runtimes directly from its findings:
 
 ```bash
-# Scan → generate policy in one command
+# mcpfw (default) — transparent MCP proxy
 agentspec model agent.yaml --emit-policy -o policy.yaml
 
-# Then enforce at runtime
-mcpfw --policy policy.yaml -- npx @modelcontextprotocol/server-filesystem .
+# OPA Rego — for OPA/Gatekeeper/Styra
+agentspec model agent.yaml --emit-policy --policy-format rego -o policy.rego
+
+# Cedar — for AWS Verified Permissions / Cedar
+agentspec model agent.yaml --emit-policy --policy-format cedar -o policy.cedar
+
+# Microsoft Agent Governance Toolkit
+agentspec model agent.yaml --emit-policy --policy-format agt -o policy.yaml
 ```
 
-Static analysis finds the risks. Runtime enforcement blocks them.
+Static analysis finds the risks. Your runtime enforces them — whichever runtime you use.
 
 ## Dependencies
 

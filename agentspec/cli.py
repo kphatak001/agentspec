@@ -21,7 +21,10 @@ def main(argv: list[str] | None = None) -> int:
     model_p.add_argument("--owasp", default="all", help="Filter OWASP categories: 01,02,03 or all")
     model_p.add_argument("-v", "--verbose", action="store_true")
     model_p.add_argument("--emit-policy", action="store_true",
-                        help="Generate mcpfw policy YAML from findings")
+                        help="Generate runtime enforcement policy from findings")
+    model_p.add_argument("--policy-format", default="mcpfw",
+                        choices=["mcpfw", "rego", "cedar", "agt"],
+                        help="Policy output format (default: mcpfw)")
 
     args = ap.parse_args(argv)
     if args.command != "model":
@@ -40,11 +43,11 @@ def main(argv: list[str] | None = None) -> int:
 
     # Handle --emit-policy or --output-format policy
     if args.emit_policy or args.output_format == "policy":
-        out = emit_policy(arch, findings)
+        out = emit_policy(arch, findings, fmt=args.policy_format)
         if args.output:
             with open(args.output, "w") as f:
                 f.write(out)
-            print(f"mcpfw policy written to {args.output}")
+            print(f"{args.policy_format} policy written to {args.output}")
         else:
             print(out)
         return 0
