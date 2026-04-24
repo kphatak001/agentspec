@@ -1,0 +1,21 @@
+{
+  "name": "infra-automation",
+  "description": "Infrastructure automation agent with AWS and GitHub access",
+  "model": "claude-sonnet-4",
+  "allowedTools": [
+    "read", "write", "shell", "glob", "grep",
+    "aws___call_aws", "aws___search_documentation"
+  ],
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"]
+    },
+    "aws-docs": {
+      "command": "npx",
+      "args": ["-y", "@aws/mcp-server-docs"]
+    }
+  },
+  "autoApprove": ["read", "glob", "grep", "aws___search_documentation"],
+  "systemPrompt": "You are an infrastructure automation agent. You can read and write files, execute shell commands, and interact with AWS and GitHub."
+}

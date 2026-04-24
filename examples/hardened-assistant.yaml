@@ -1,0 +1,44 @@
+# Hardened agent config — demonstrates agentspec best practices
+# Run: agentspec model examples/hardened-assistant.yaml -v
+# Expected: score < 20, 0 CRITICAL, 0 HIGH findings
+name: hardened-assistant
+
+agents:
+  - name: assistant
+    model: claude-sonnet-4
+    tools:
+      - name: read_file
+        type: read
+        scope: "project/**"
+      - name: write_file
+        type: write
+        scope: "project/src/**"
+        auto_approved: false
+      - name: run_tests
+        type: execute
+        scope: "npm test"
+        auto_approved: true  # safe: scoped to test runner only
+      - name: search_docs
+        type: read
+        mcp_server: "npx @aws/mcp-server-docs"
+    delegates_to: []
+    output_validated: true
+    system_prompt: "You are a coding assistant. You can only read/write within the project directory."
+
+memory:
+  sources:
+    - name: project_context
+      type: local_files
+      writable: false
+      content_validated: true
+
+logging:
+  enabled: true
+  tool_calls: true
+  agent_decisions: true
+  destinations: ["stdout", "audit.jsonl"]
+  skill_scanning: true
+
+human_in_the_loop:
+  enabled: true
+  required_for: ["write_file"]

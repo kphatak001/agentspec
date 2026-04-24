@@ -1,0 +1,38 @@
+# CrewAI security research crew
+agents:
+  - role: vulnerability_scanner
+    backstory: "Expert at finding CVEs and security misconfigurations"
+    tools:
+      - web_search
+      - code_search
+      - execute_bash
+    allow_delegation: true
+    verbose: true
+
+  - role: exploit_analyst
+    backstory: "Analyzes vulnerabilities for exploitability and impact"
+    tools:
+      - web_search
+      - read_file
+      - write_file
+    allow_delegation: false
+
+  - role: report_writer
+    backstory: "Writes clear, actionable security reports"
+    tools:
+      - read_file
+      - write_file
+    allow_delegation: false
+
+tasks:
+  - description: "Scan target for known vulnerabilities"
+    agent: vulnerability_scanner
+    output_file: scan_results.md
+
+  - description: "Analyze exploitability of findings"
+    agent: exploit_analyst
+    context: [scan_results.md]
+
+  - description: "Generate executive security report"
+    agent: report_writer
+    output_file: security_report.md

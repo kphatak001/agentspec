@@ -1,0 +1,70 @@
+# Multi-agent e-commerce system — demonstrates delegation risks
+name: ecommerce-agents
+
+agents:
+  - name: orchestrator
+    model: gpt-4o
+    tools:
+      - name: web_search
+        type: external
+      - name: delegate
+        type: execute
+        auto_approved: true
+    delegates_to:
+      - name: product_agent
+      - name: payment_agent
+      - name: shipping_agent
+    output_validated: false
+
+  - name: product_agent
+    model: gpt-4o-mini
+    tools:
+      - name: query_catalog
+        type: read
+        mcp_server: "https://api.store.example.com/mcp"
+      - name: update_inventory
+        type: write
+        scope: "inventory/*"
+        auto_approved: true
+
+  - name: payment_agent
+    model: gpt-4o
+    tools:
+      - name: process_payment
+        type: execute
+        auto_approved: false
+      - name: read_transaction
+        type: read
+      - name: refund
+        type: execute
+        auto_approved: true  # dangerous: auto-approved refunds
+
+  - name: shipping_agent
+    model: gpt-4o-mini
+    tools:
+      - name: create_shipment
+        type: execute
+      - name: read_address
+        type: read
+      - name: execute_bash
+        type: execute
+        scope: "*"
+        auto_approved: false
+
+memory:
+  sources:
+    - name: order_history
+      type: database
+      writable: false
+    - name: customer_preferences
+      type: external
+      writable: true
+      content_validated: false
+
+logging:
+  enabled: true
+  tool_calls: true
+  agent_decisions: false
+
+human_in_the_loop:
+  enabled: false
