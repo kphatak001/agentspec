@@ -101,6 +101,31 @@ agentspec model agent.yaml --owasp 01,02,03            # specific categories
 4. **Format-agnostic.** Parsers are pluggable. Works with any agent framework.
 5. **Partial analysis is fine.** Missing info → skip that analyzer, don't fail.
 
+## CI / GitHub Action
+
+Add agentspec to your CI pipeline — it comments findings directly on PRs:
+
+```yaml
+# .github/workflows/agentspec.yml
+name: Agent Security Scan
+on: [pull_request]
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: kphatak001/agentspec@main
+        with:
+          config: agent.yaml        # your agent config
+          fail-on: HIGH             # fail PR if HIGH or CRITICAL findings
+          emit-policy: mcpfw        # optionally generate a policy file
+```
+
+Inputs: `config`, `format`, `min-severity`, `fail-on` (CRITICAL/HIGH/MEDIUM/LOW/none), `emit-policy` (mcpfw/rego/cedar/agt).
+
 ## Generate Runtime Policies
 
 agentspec generates enforcement policies for multiple runtimes directly from its findings:
