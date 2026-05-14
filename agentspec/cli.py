@@ -5,6 +5,7 @@ import argparse
 import sys
 from . import parser, analyzer, scorer, reporter
 from .emit_policy import emit_policy
+from .emit_envelope import emit_envelope
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -22,6 +23,8 @@ def main(argv: list[str] | None = None) -> int:
     model_p.add_argument("-v", "--verbose", action="store_true")
     model_p.add_argument("--emit-policy", action="store_true",
                         help="Generate runtime enforcement policy from findings")
+    model_p.add_argument("--emit-envelope", action="store_true",
+                        help="Generate agent-envelope YAML for session-level enforcement")
     model_p.add_argument("--policy-format", default="mcpfw",
                         choices=["mcpfw", "rego", "cedar", "agt"],
                         help="Policy output format (default: mcpfw)")
@@ -40,6 +43,17 @@ def main(argv: list[str] | None = None) -> int:
     owasp_filter = None if args.owasp == "all" else set(args.owasp.split(","))
     findings = analyzer.run(arch, owasp_filter=owasp_filter, min_severity=args.min_severity)
     tm = scorer.score(arch, findings)
+
+    # Handle --emit-envelope
+    if args.emit_envelope:
+        out = emit_envelope(arch, findings)
+        if args.output:
+            with open(args.output, "w") as f:
+                f.write(out)
+            print(f"Envelope written to {args.output}")
+        else:
+            print(out)
+        return 0
 
     # Handle --emit-policy or --output-format policy
     if args.emit_policy or args.output_format == "policy":
