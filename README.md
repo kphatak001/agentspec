@@ -165,6 +165,46 @@ agentspec model agent.yaml --emit-policy --policy-format agt -o policy.yaml
 
 Static analysis finds the risks. Your runtime enforces them — whichever runtime you use.
 
+## Generate Behavioral Envelopes
+
+agentspec generates [agent-envelope](https://github.com/kphatak001/agent-envelope) YAML for session-level behavioral enforcement:
+
+```bash
+agentspec model agent.yaml --emit-envelope -o envelope.yaml
+```
+
+The generated envelope includes:
+- **Workflow patterns** derived from your agent's tool types (read → process → write)
+- **Budget limits** scaled to tool count and risk level
+- **Forbidden data flows** based on sensitive reads + external writes
+- **Drift thresholds** tightened automatically for high-risk architectures
+
+Use with mcpfw's HTTP proxy mode for network-enforced session policy:
+
+```bash
+# Generate both layers from one scan
+agentspec model agent.yaml --emit-policy -o policy.yaml
+agentspec model agent.yaml --emit-envelope -o envelope.yaml
+
+# Enforce at the network layer
+mcpfw --listen :8443 --target https://mcp-server:3000 \
+      --policy policy.yaml --envelope envelope.yaml
+```
+
+This closes the governance loop: **scan → generate → enforce**. No manual policy authoring required.
+
+## The Trilogy
+
+agentspec is part of a three-layer open-source agent security stack:
+
+| Layer | Tool | Question | Timing |
+|-------|------|----------|--------|
+| Pre-deploy | **agentspec** | "Is this agent config risky?" | Before launch |
+| Runtime (session) | [agent-envelope](https://github.com/kphatak001/agent-envelope) | "Is this agent off-script?" | Continuous |
+| Runtime (per-call) | [mcpfw](https://github.com/kphatak001/mcpfw) | "Is this specific call allowed?" | Each action |
+
+agentspec generates policies for both runtime layers automatically.
+
 ## Dependencies
 
 - Python 3.10+
